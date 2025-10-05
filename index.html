@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ExploreX - Discover NASA's Journey Through Space - An interactive space missions explorer">
+    <title>ExploreX - Interactive Space Missions Map</title>
+    
+    <!-- Google Fonts - Futuristic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Three.js for 3D Planet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Canvas for optimized starfield animation -->
+    <canvas id="starfield-canvas"></canvas>
+    
+    <!-- Parallax background with animated stars (keeping for fallback) -->
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <!-- Logo and brand name -->
+            <div class="nav-brand">
+                <i class="fas fa-rocket"></i>
+                <span>ExploreX</span>
+            </div>
+            
+            <!-- Navigation links -->
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#missions" class="nav-link">Missions</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+            </ul>
+            
+            <!-- Dark/Light Mode Toggle -->
+            <div class="theme-controls">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                
+                <!-- Voice Assistant Button -->
+                <button class="voice-btn" id="voice-btn" aria-label="Voice Assistant">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile menu toggle button -->
+            <div class="nav-toggle" id="nav-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section / Hero -->
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <!-- Main headline -->
+            <h1 class="hero-title">
+                Discover NASA's Journey Through Space
+            </h1>
+            
+            <!-- Subtext -->
+            <p class="hero-subtitle">
+                Explore all missions from Earth to the edge of the Solar System
+            </p>
+            
+            <!-- Call to action button -->
+            <button class="cta-button" id="explore-btn">
+                <i class="fas fa-compass"></i>
+                Start Exploring
+            </button>
+            
+            <!-- Animated planets decoration -->
+            <div class="hero-icons">
+                <i class="fas fa-globe planet-icon"></i>
+                <i class="fas fa-satellite satellite-icon"></i>
+                <i class="fas fa-moon moon-icon"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D Rotating Planet Section -->
+    <section id="planet-3d-section" class="planet-3d-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-globe-americas"></i>
+                Explore in 3D
+            </h2>
+            <div class="planet-3d-container">
+                <div id="planet-canvas-container"></div>
+                <div class="planet-controls">
+                    <button class="planet-control-btn" id="pause-rotation">
+                        <i class="fas fa-pause"></i> Pause Rotation
+                    </button>
+                    <p class="planet-description">
+                        <i class="fas fa-hand-pointer"></i> Drag to rotate • 
+                        <i class="fas fa-satellite"></i> Watch satellites orbit • 
+                        <i class="fas fa-cloud"></i> Realistic Earth with clouds
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APOD Section - Astronomy Picture of the Day -->
+    <section id="apod-section" class="apod-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-star"></i>
+                Astronomy Picture of the Day
+            </h2>
+            
+            <div class="apod-content">
+                <div class="apod-image-container">
+                    <img id="apod-image" src="" alt="APOD" class="apod-image apod-fade-in" loading="lazy">
+                </div>
+                <div class="apod-info">
+                    <h3 id="apod-title" class="apod-title">Loading...</h3>
+                    <p id="apod-date" class="apod-date"></p>
+                    <p id="apod-explanation" class="apod-explanation">Loading today's astronomy picture...</p>
+                    <p id="apod-credit" class="apod-credit" style="display: none;"></p>
+                    <!-- Share Button -->
+                    <button class="share-apod-btn" id="share-apod-btn">
+                        <i class="fab fa-twitter"></i> Share on X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Mission Timeline Section -->
+    <section id="timeline-section" class="timeline-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-clock"></i>
+                Mission Timeline
+            </h2>
+            <div class="timeline-scroll-container">
+                <div class="timeline-track" id="timeline-track">
+                    <!-- Timeline items will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Launch Countdown Section -->
+    <section id="countdown-section" class="countdown-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-rocket"></i>
+                Upcoming Mission Launches
+            </h2>
+            <div class="countdown-grid" id="countdown-grid">
+                <!-- Countdown cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Missions Section -->
+    <section id="missions" class="missions-section">
+        <div class="container">
+            <!-- Section header -->
+            <h2 class="section-title">
+                <i class="fas fa-space-shuttle"></i>
+                Space Missions
+            </h2>
+            
+            <!-- Search and filter bar -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search missions by name, planet, or year..."
+                        aria-label="Search missions"
+                    >
+                </div>
+                
+                <!-- Filter buttons -->
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">
+                        <i class="fas fa-list"></i> All
+                    </button>
+                    <button class="filter-btn" data-filter="Mars">
+                        <i class="fas fa-circle" style="color: #cd5c5c;"></i> Mars
+                    </button>
+                    <button class="filter-btn" data-filter="Moon">
+                        <i class="fas fa-moon"></i> Moon
+                    </button>
+                    <button class="filter-btn" data-filter="Jupiter">
+                        <i class="fas fa-circle" style="color: #daa520;"></i> Jupiter
+                    </button>
+                    <button class="filter-btn" data-filter="Saturn">
+                        <i class="fas fa-ring"></i> Saturn
+                    </button>
+                    <button class="filter-btn" data-filter="Earth">
+                        <i class="fas fa-globe" style="color: #64c8ff;"></i> Earth
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Loading animation -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading mission data from NASA...</p>
+            </div>
+            
+            <!-- Mission cards grid -->
+            <div class="missions-grid" id="missions-grid">
+                <!-- Mission cards will be dynamically inserted here by JavaScript -->
+            </div>
+            
+            <!-- No results message -->
+            <div class="no-results" id="no-results" style="display: none;">
+                <i class="fas fa-satellite-dish"></i>
+                <p>No missions found. Try a different search term.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                About This Project
+            </h2>
+            
+            <div class="about-content">
+                <!-- NASA exploration information -->
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>NASA's Exploration Legacy</h3>
+                    <p>
+                        For over six decades, NASA has been at the forefront of space exploration, 
+                        sending missions to every planet in our solar system and beyond. From the 
+                        historic Apollo moon landings to the Mars rovers exploring the Red Planet, 
+                        each mission has expanded our understanding of the cosmos and our place within it.
+                    </p>
+                </div>
+                
+                <!-- Data sources information -->
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Open Data Sources</h3>
+                    <p>
+                        This project leverages NASA's public APIs to bring you real mission data, 
+                        images, and information. All data is sourced from the NASA Image and Video 
+                        Library API, providing authentic mission photos, descriptions, and historical 
+                        records. NASA's commitment to open data makes space exploration accessible to everyone.
+                    </p>
+                </div>
+                
+                <!-- Project purpose -->
+                <div class="about-card">
+                    <div class="about-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>NASA Space Apps Challenge 2025</h3>
+                    <p>
+                        ExploreX was created for the NASA Space Apps Challenge 2025 under the 
+                        "Create Your Own Challenge" category. This interactive visualization aims 
+                        to inspire curiosity about space exploration and make NASA's incredible 
+                        achievements accessible and engaging for people of all ages and backgrounds.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Project credit -->
+                <div class="footer-section">
+                    <h4>ExploreX</h4>
+                    <p>Created for NASA Space Apps Challenge 2025</p>
+                    <p class="footer-tagline">
+                        <i class="fas fa-star"></i>
+                        Exploring the cosmos, one mission at a time
+                    </p>
+                </div>
+                
+                <!-- Social links -->
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="https://www.nasa.gov" target="_blank" aria-label="NASA Website">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                        <a href="https://github.com" target="_blank" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://twitter.com/nasa" target="_blank" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.instagram.com/nasa" target="_blank" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Data attribution -->
+                <div class="footer-section">
+                    <h4>Data Source</h4>
+                    <p>
+                        <i class="fas fa-satellite"></i>
+                        Powered by NASA's Open APIs
+                    </p>
+                    <a href="https://api.nasa.gov" target="_blank" class="footer-link">
+                        api.nasa.gov
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div class="footer-bottom">
+                <p>&copy; 2025 ExploreX | NASA Space Apps Challenge | All mission data courtesy of NASA</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for mission details -->
+    <div class="modal" id="mission-modal">
+        <div class="modal-content">
+            <!-- Close button -->
+            <button class="modal-close" id="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- Modal body - content will be dynamically inserted -->
+            <div class="modal-body" id="modal-body">
+                <!-- Mission details will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Space Facts Widget (floating, bottom-right) -->
+    <div class="space-facts-widget" id="space-facts-widget">
+        <div class="facts-header">
+            <i class="fas fa-star"></i>
+            <span>Space Fact</span>
+        </div>
+        <p class="fact-text" id="fact-text">Loading amazing space facts...</p>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+        <i class="fas fa-rocket"></i>
+    </button>
+
+    <!-- Voice Assistant Feedback -->
+    <div class="voice-feedback" id="voice-feedback">
+        <div class="voice-pulse"></div>
+        <p id="voice-status">Listening...</p>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
