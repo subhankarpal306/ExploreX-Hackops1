@@ -191,3 +191,4 @@ Preferred communication style: Simple, everyday language.
 **Web Animations API & RequestAnimationFrame**
 - Purpose: Smooth animations
 - Usage: 3D planet rotation, starfield movement, scroll effects
+- Check out the competition page: https://www.spaceappschallenge.org
